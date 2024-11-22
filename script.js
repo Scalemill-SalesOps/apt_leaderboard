@@ -22,6 +22,8 @@ const leaderboardData = [
     { Team: "Payactiv", SDR: "Shiraz Iqbal", Appointments: 4 },
     { Team: "Payactiv", SDR: "Tahir Yaqoob", Appointments: 4 },
     { Team: "NINJIO", SDR: "Joshua Rodrigues", Appointments: 4 },
+    { Team: "Qubriux", SDR: "Anas", Appointments: 4},
+    {Team: "Payoneer Checkout", SDR: "Ali Hassan", Appointments: 4},
     { Team: "illumin", SDR: "Amjad Baig", Appointments: 3 },
     { Team: "illumin", SDR: "Khuzaima Tahir", Appointments: 3 },
     { Team: "Payactiv", SDR: "Ali Saqlain", Appointments: 3 },
@@ -40,7 +42,8 @@ const leaderboardData = [
     { Team: "CanopyConnect", SDR: "Webster Davies", Appointments: 1 },
     { Team: "Payactiv", SDR: "Ahmed Sarwaich", Appointments: 1 },
     { Team: "Payactiv", SDR: "Jaish Yousaf", Appointments: 1 },
-    { Team: "Payactiv", SDR: "Muhammad Wajahat", Appointments: 1 }
+    { Team: "Payactiv", SDR: "Muhammad Wajahat", Appointments: 1 },
+    { Team: "Qubriux", SDR: "Samuel", Appointments: 1}
 ];
 
 // Populate the leaderboard table
@@ -71,7 +74,7 @@ const populateTable = () => {
     // Initialize DataTables without sorting
     $('#leaderboard').DataTable({
         ordering: false,
-        searching: false,
+        searching: true,
         paging: true,
         info: false,
     });
