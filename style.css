@@ -1,0 +1,79 @@
+/* General styles for the body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Center-align the main title */
+h1 {
+    color: #343a40;
+    text-align: center;
+}
+
+/* Styling for the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Center-align headers and data */
+th, td {
+    text-align: center !important; /* Force center alignment */
+    padding: 8px;
+}
+
+/* Styling specifically for the table headers */
+th {
+    background-color: #343a40;
+    color: white;
+    vertical-align: middle; /* Center align vertically */
+}
+
+/* Add a subtle border and background color to table rows */
+td {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Footer styling */
+footer {
+    background-color: #343a40;
+    color: white;
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Styling for the important note */
+footer .important-note {
+    font-weight: bold; /* Make the text bold */
+    color: #FFD700; /* Use a gold color to draw attention */
+    background-color: #212529; /* Subtle background contrast */
+    padding: 10px; /* Add some padding for emphasis */
+    display: inline-block; /* Make it stand out as a block */
+    margin-top: 10px; /* Add space between other footer elements */
+    border-radius: 5px; /* Rounded corners for better aesthetics */
+}
+
+
+/* Adjust crown alignment and spacing */
+td i.fas {
+    margin-right: 5px; /* Add some spacing between the icon and text */
+    vertical-align: middle; /* Center align with text */
+}
+
+/* Ensure the crown column is properly styled */
+.crown-column {
+    text-align: left; /* Align crowns to the left */
+    width: 50px; /* Adjust width for visual balance */
+}
+
+/* Increase crown size and adjust spacing */
+.crown-column i.fas {
+    font-size: 2em; /* Make the crown icons larger */
+    margin-left: 10px; /* Add some spacing from the left edge */
+}
+
+
