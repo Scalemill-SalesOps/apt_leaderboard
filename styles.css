@@ -1,0 +1,57 @@
+/* Table styles */
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 18px;
+    width: 100%;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px 15px;
+    text-align: center; /* Centers text horizontally */
+    vertical-align: middle; /* Centers text vertically */
+
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+    transform: scale(1.01);
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+/* Responsive table */
+.styled-table {
+    font-size: 16px;
+}
+
+/* Responsive navbar adjustments */
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 40px;
+    }
+    .nav-link {
+        font-size: 14px;
+    }
+}
+
+.table-note {
+    font-size: 0.9em; /* Slightly smaller font size */
+    color: #6c757d; /* Subtle gray color */
+    margin-bottom: 10px; /* Spacing below the note */
+    text-align: center; /* Center the text above the table */
+}
