@@ -55,3 +55,50 @@
     margin-bottom: 10px; /* Spacing below the note */
     text-align: center; /* Center the text above the table */
 }
+
+.region-heading {
+    font-size: 1.5rem;
+    color: #009879;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .nav-link {
+    position: relative;
+    color: #007bff; /* Default color */
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .nav-link:hover {
+    color: #0056b3; /* Change color on hover */
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* Slightly below the link */
+    width: 0;
+    height: 2px;
+    background-color: #007bff; /* Line color matches the default color */
+    transition: width 0.3s ease-in-out;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%; /* Expand underline on hover */
+  }
+  
+  .main-heading {
+    font-size: 2.5rem;
+    color: #009879;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 3px solid #0056b3;
+    display: block; /* Treat it as a block element */
+    padding: 5px 15px;
+    margin: 30px auto 20px auto; /* Center it horizontally with auto */
+}
