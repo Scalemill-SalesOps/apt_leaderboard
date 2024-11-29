@@ -131,3 +131,10 @@
         font-size: 16px; /* Slightly smaller font size for side-by-side tables */
     }
 }
+
+.awards-heading {
+    font-size: 2rem;
+    color: #009879; /* A distinct color to differentiate from leaderboard headings */
+    text-align: center;
+    margin-bottom: 20px;
+}
