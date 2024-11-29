@@ -102,3 +102,32 @@
     padding: 5px 15px;
     margin: 30px auto 20px auto; /* Center it horizontally with auto */
 }
+
+/* styles.css */
+
+/* Adjust the table container to have some padding */
+.leaderboard-container .row > div {
+    padding: 0 15px; /* Optional: Adjust as needed */
+}
+
+/* Ensure tables take full width of their container */
+.styled-table {
+    width: 100%; /* Already present, reaffirming */
+}
+
+/* Center region headings within their columns */
+.region-heading {
+    text-align: center;
+    /* Existing styles */
+    font-size: 1.5rem;
+    color: #009879;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Optional: Adjust table font size for smaller columns */
+@media (min-width: 768px) {
+    .styled-table {
+        font-size: 16px; /* Slightly smaller font size for side-by-side tables */
+    }
+}

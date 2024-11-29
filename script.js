@@ -4,6 +4,75 @@ const showupLink = document.getElementById('showup-link');
 const leaderboardContainer = document.querySelector('.leaderboard-container');
 const leaderboardTitle = document.getElementById('leaderboard-title');
 
+// Define the order of regions for consistent layout
+const regionOrder = ['America', 'Europe', 'Asia', 'Middle East'];
+
+// Helper function to create a table for a specific region
+function createRegionTable(region, data, headers) {
+  // Create a container for the region
+  const regionContainer = document.createElement('div');
+  regionContainer.className = 'mb-4'; // Margin bottom for spacing
+
+  // Add region heading
+  const regionHeading = document.createElement('h3');
+  regionHeading.textContent = region;
+  regionHeading.classList.add('region-heading');
+  regionContainer.appendChild(regionHeading);
+
+  // Create table
+  const table = document.createElement('table');
+  table.className = 'styled-table';
+
+  // Table header
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+
+  // Add an empty header for crowns
+  const crownTh = document.createElement('th');
+  crownTh.textContent = ''; // Empty for the crown column
+  headerRow.appendChild(crownTh);
+
+  // Add other headers
+  headers.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  // Table body
+  const tbody = document.createElement('tbody');
+  data.forEach((row, index) => {
+    const tr = document.createElement('tr');
+
+    // Add crown column for top 3 performers
+    const crownTd = document.createElement('td');
+    if (index === 0) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #FFD700;"></i>`; // Gold
+    } else if (index === 1) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #C0C0C0;"></i>`; // Silver
+    } else if (index === 2) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #CD7F32;"></i>`; // Bronze
+    }
+    tr.appendChild(crownTd);
+
+    // Add other data columns
+    headers.forEach(header => {
+      const td = document.createElement('td');
+      td.textContent = row[header];
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  // Append table to region container
+  regionContainer.appendChild(table);
+
+  return regionContainer;
+}
+
 // Function to render tables and set heading
 function renderTables(data, headers, title) {
   // Set the main heading
@@ -12,64 +81,38 @@ function renderTables(data, headers, title) {
   // Clear existing content
   leaderboardContainer.innerHTML = '';
 
-  // Iterate over regions
-  for (const region in data) {
-    // Add region heading
-    const regionHeading = document.createElement('h3');
-    regionHeading.textContent = region;
-    regionHeading.classList.add('region-heading');
-    leaderboardContainer.appendChild(regionHeading);
+  // Iterate through regions in pairs to create rows with two columns
+  for (let i = 0; i < regionOrder.length; i += 2) {
+    // Create a Bootstrap row
+    const row = document.createElement('div');
+    row.className = 'row mb-4'; // mb-4 for spacing between rows
 
-    // Create table
-    const table = document.createElement('table');
-    table.className = 'styled-table';
+    // First column (Left)
+    const col1 = document.createElement('div');
+    col1.className = 'col-md-6'; // Half width on medium and larger screens
 
-    // Table header
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
+    const region1 = regionOrder[i];
+    if (data[region1]) {
+      const table1 = createRegionTable(region1, data[region1], headers);
+      col1.appendChild(table1);
+    }
 
-    // Add an empty header for crowns
-    const crownTh = document.createElement('th');
-    crownTh.textContent = ''; // Empty for the crown column
-    headerRow.appendChild(crownTh);
+    // Second column (Right)
+    const col2 = document.createElement('div');
+    col2.className = 'col-md-6';
 
-    // Add other headers
-    headers.forEach(header => {
-      const th = document.createElement('th');
-      th.textContent = header;
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
+    const region2 = regionOrder[i + 1];
+    if (region2 && data[region2]) {
+      const table2 = createRegionTable(region2, data[region2], headers);
+      col2.appendChild(table2);
+    }
 
-    // Table body
-    const tbody = document.createElement('tbody');
-    data[region].forEach((row, index) => {
-      const tr = document.createElement('tr');
+    // Append columns to row
+    row.appendChild(col1);
+    row.appendChild(col2);
 
-      // Add crown column for top 3 performers
-      const crownTd = document.createElement('td');
-      if (index === 0) {
-        crownTd.innerHTML = `<i class="fas fa-crown" style="color: #FFD700;"></i>`; // Gold
-      } else if (index === 1) {
-        crownTd.innerHTML = `<i class="fas fa-crown" style="color: #C0C0C0;"></i>`; // Silver
-      } else if (index === 2) {
-        crownTd.innerHTML = `<i class="fas fa-crown" style="color: #CD7F32;"></i>`; // Bronze
-      }
-      tr.appendChild(crownTd);
-
-      // Add other data columns
-      headers.forEach(header => {
-        const td = document.createElement('td');
-        td.textContent = row[header];
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-
-    // Append table to container
-    leaderboardContainer.appendChild(table);
+    // Append row to leaderboard container
+    leaderboardContainer.appendChild(row);
   }
 }
 
