@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Leaderboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -34,52 +34,19 @@
       <h1 id="leaderboard-title" class="main-heading"></h1>
 
       <!-- Note -->
-      <p id="leaderboard-note" class="table-note">*Numbers are the reflection of data up to 28-Nov-2024.</p>
+      <!-- <p id="leaderboard-note" class="table-note">*Numbers are the reflection of data up to 30-Nov-2024.</p> -->
 
       <!-- Leaderboard Tables -->
       <div class="leaderboard-container"></div>
+    </div>
+  </div>
 
-      <!-- Payoneer Awards Section -->
-      <div class="payoneer-awards-section mt-5">
-        <h2 class="awards-heading">Payoneer Awards</h2>
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th></th> <!-- Empty header for the crown column -->
-              <th>Registered by</th>
-              <th>Signups</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><i class="fas fa-crown" style="color: #FFD700;"></i></td> <!-- Gold Crown -->
-              <td>Fatimah</td>
-              <td>20</td>
-            </tr>
-            <tr>
-              <td><i class="fas fa-crown" style="color: #C0C0C0;"></i></td> <!-- Silver Crown -->
-              <td>Iqra</td>
-              <td>14</td>
-            </tr>
-            <tr>
-              <td><i class="fas fa-crown" style="color: #CD7F32;"></i></td> <!-- Bronze Crown -->
-              <td>Noor</td>
-              <td>12</td>
-            </tr>
-            <tr>
-              <td></td> <!-- No crown for Uzair -->
-              <td>Uzair</td>
-              <td>8</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 
-      <script src="data.js"></script> <!-- External data file -->
-      <script src="script.js"></script> <!-- External script file -->
-      <!-- JavaScript -->
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+  <!-- External script file -->
+  <script src="script.js"></script>
 </body>
 
 </html>

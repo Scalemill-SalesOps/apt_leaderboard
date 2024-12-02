@@ -1,3 +1,5 @@
+// script.js
+
 // DOM elements
 const appointmentLink = document.getElementById('appointment-link');
 const showupLink = document.getElementById('showup-link');
@@ -6,6 +8,10 @@ const leaderboardTitle = document.getElementById('leaderboard-title');
 
 // Define the order of regions for consistent layout
 const regionOrder = ['America', 'Europe', 'Asia', 'Middle East'];
+
+// SheetDB API endpoints
+const APPOINTMENTS_API = 'https://sheetdb.io/api/v1/bxy8qm8ctm6hi';
+const SHOWUPS_API = 'https://sheetdb.io/api/v1/wybohx0emry9z';
 
 // Helper function to create a table for a specific region
 function createRegionTable(region, data, headers) {
@@ -92,7 +98,7 @@ function renderTables(data, headers, title) {
     col1.className = 'col-md-6'; // Half width on medium and larger screens
 
     const region1 = regionOrder[i];
-    if (data[region1]) {
+    if (data[region1] && data[region1].length > 0) {
       const table1 = createRegionTable(region1, data[region1], headers);
       col1.appendChild(table1);
     }
@@ -102,7 +108,7 @@ function renderTables(data, headers, title) {
     col2.className = 'col-md-6';
 
     const region2 = regionOrder[i + 1];
-    if (region2 && data[region2]) {
+    if (region2 && data[region2] && data[region2].length > 0) {
       const table2 = createRegionTable(region2, data[region2], headers);
       col2.appendChild(table2);
     }
@@ -116,16 +122,66 @@ function renderTables(data, headers, title) {
   }
 }
 
+// Function to fetch data from SheetDB API
+async function fetchLeaderboardData(apiUrl, type) {
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    // Process data
+    const processedData = {};
+
+    regionOrder.forEach(region => {
+      let regionData = data
+        .filter(entry => entry.Region === region)
+        .sort((a, b) => parseInt(b[type]) - parseInt(a[type]));
+
+      if (region === 'America') {
+        regionData = regionData.slice(0, 10);
+      }
+
+      if (regionData.length > 0) {
+        processedData[region] = regionData.map(entry => ({
+          Team: entry.Team,
+          SDR: entry.SDR,
+          [type]: parseInt(entry[type])
+        }));
+      }
+    });
+
+    return processedData;
+  } catch (error) {
+    console.error('Error fetching leaderboard data:', error);
+    leaderboardContainer.innerHTML = `<p class="text-danger">Failed to load data. Please try again later.</p>`;
+    return null;
+  }
+}
+
 // Event listeners for navigation links
-appointmentLink.addEventListener('click', () => {
-  renderTables(leaderboardData, ['Team', 'SDR', 'Appointments'], 'Appointment Leaderboard');
+appointmentLink.addEventListener('click', async () => {
+  leaderboardTitle.textContent = 'Loading Appointment Leaderboard...';
+  const data = await fetchLeaderboardData(APPOINTMENTS_API, 'Appointments');
+  if (data) {
+    renderTables(data, ['Team', 'SDR', 'Appointments'], 'Appointment Leaderboard');
+  }
 });
 
-showupLink.addEventListener('click', () => {
-  renderTables(showupLeaderboardData, ['Team', 'SDR', 'Showups'], 'Showup Leaderboard');
+showupLink.addEventListener('click', async () => {
+  leaderboardTitle.textContent = 'Loading Showup Leaderboard...';
+  const data = await fetchLeaderboardData(SHOWUPS_API, 'Showups');
+  if (data) {
+    renderTables(data, ['Team', 'SDR', 'Showups'], 'Showup Leaderboard');
+  }
 });
 
 // Initial render when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  renderTables(leaderboardData, ['Team', 'SDR', 'Appointments'], 'Appointment Leaderboard');
+document.addEventListener('DOMContentLoaded', async () => {
+  leaderboardTitle.textContent = 'Loading Appointment Leaderboard...';
+  const data = await fetchLeaderboardData(APPOINTMENTS_API, 'Appointments');
+  if (data) {
+    renderTables(data, ['Team', 'SDR', 'Appointments'], 'Appointment Leaderboard');
+  }
 });
