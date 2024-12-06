@@ -7,19 +7,8 @@ const callQualityLink = document.getElementById('callquality-link');
 const leaderboardContainer = document.querySelector('.leaderboard-container');
 const leaderboardTitle = document.getElementById('leaderboard-title');
 
-// Define the order of projects (Teams) for consistent layout, sorted alphabetically
-const projectOrder = [
-  'Avibra',
-  'CanopyConnect',
-  'FP&A',
-  'illumin',
-  'NINJIO',
-  'Payactiv',
-  'Payoneer',
-  'Payoneer Checkout',
-  'PureVPN & PureDome',
-  'Qubriux'
-];
+// Initialize projectOrder as an empty array
+let projectOrder = [];
 
 // SheetDB API endpoints
 const APPOINTMENTS_API = 'https://sheetdb.io/api/v1/bxy8qm8ctm6hi';
@@ -71,7 +60,7 @@ function createProjectTable(project, data, headers, type) {
   const tbody = document.createElement('tbody');
 
   // Extract unique scores in descending order to map scores to colors
-  const uniqueScores = [...new Set(data.map(entry => parseInt(entry[type])))].sort((a, b) => b - a);
+  const uniqueScores = [...new Set(data.map(entry => parseInt(entry[type], 10)))].sort((a, b) => b - a);
 
   // Map top 3 unique scores to crown colors
   const colorMap = {};
@@ -84,7 +73,7 @@ function createProjectTable(project, data, headers, type) {
     const tr = document.createElement('tr');
 
     // Add crown column based on the SDR's score
-    const sdrScore = parseInt(row[type]);
+    const sdrScore = parseInt(row[type], 10);
     const crownTd = document.createElement('td');
 
     if (colorMap[sdrScore]) {
@@ -115,9 +104,10 @@ function createProjectTable(project, data, headers, type) {
  * @param {Array} data - The data array
  * @param {Array} headers - The table headers
  * @param {string} title - The table title
+ * @param {string} type - The type of leaderboard ('Average Score/Appointment')
  * @returns {HTMLElement} - The table container
  */
-function createSingleTable(data, headers, title) {
+function createSingleTable(data, headers, title, type) {
   // Create a container for the table
   const tableContainer = document.createElement('div');
   tableContainer.className = 'mb-4'; // Margin bottom for spacing
@@ -154,7 +144,7 @@ function createSingleTable(data, headers, title) {
   const tbody = document.createElement('tbody');
 
   // Extract unique scores in descending order to map scores to colors
-  const uniqueScores = [...new Set(data.map(entry => parseInt(entry[type])))].sort((a, b) => b - a);
+  const uniqueScores = [...new Set(data.map(entry => parseFloat(entry[type])))].sort((a, b) => b - a);
 
   // Map top 3 unique scores to crown colors
   const colorMap = {};
@@ -167,7 +157,7 @@ function createSingleTable(data, headers, title) {
     const tr = document.createElement('tr');
 
     // Add crown column based on the SDR's score
-    const sdrScore = parseInt(row[type]);
+    const sdrScore = parseFloat(row[type]);
     const crownTd = document.createElement('td');
 
     if (colorMap[sdrScore]) {
@@ -195,7 +185,7 @@ function createSingleTable(data, headers, title) {
 
 /**
  * Function to render tables and set heading
- * @param {Object|Array} data - The processed data
+ * @param {Object} data - The processed data
  * @param {Array} headers - The table headers
  * @param {string} title - The main heading title
  * @param {boolean} isSingleTable - Flag to indicate single table rendering
@@ -252,6 +242,7 @@ function renderTables(data, headers, title, isSingleTable = false, type = 'Appoi
 /**
  * Function to fetch data from SheetDB API and group by Team (Project)
  * Limits each project to top 3 SDRs based on the specified type
+ * Orders projects dynamically based on total appointments or showups
  * @param {string} apiUrl - The API endpoint URL
  * @param {string} type - The type of data ('Appointments' or 'Showups')
  * @returns {Object|null} - The processed data grouped by Team or null on failure
@@ -264,23 +255,33 @@ async function fetchLeaderboardData(apiUrl, type) {
     }
     const data = await response.json();
 
-    // Process data
+    // Calculate total appointments or showups per project
+    const projectTotals = {};
+    data.forEach(entry => {
+      const project = entry.Team.trim();
+      const value = parseInt(entry[type], 10) || 0;
+      if (!projectTotals[project]) {
+        projectTotals[project] = 0;
+      }
+      projectTotals[project] += value;
+    });
+
+    // Sort projects based on total appointments/showups in descending order
+    projectOrder = Object.keys(projectTotals).sort((a, b) => projectTotals[b] - projectTotals[a]);
+
+    // Process data: group by project, select top 3 SDRs per project
     const processedData = {};
 
-    // Group data by Team (Project)
     projectOrder.forEach(project => {
       let projectData = data
-        .filter(entry => entry.Team === project)
-        .sort((a, b) => parseInt(b[type]) - parseInt(a[type]));
-
-      // Limit to top 3 SDRs per project
-      projectData = projectData.slice(0, 3);
+        .filter(entry => entry.Team.trim() === project)
+        .sort((a, b) => parseInt(b[type], 10) - parseInt(a[type], 10))
+        .slice(0, 3); // Limit to top 3 SDRs
 
       if (projectData.length > 0) {
-        // Map relevant fields based on the leaderboard type
         processedData[project] = projectData.map(entry => ({
-          SDR: entry.SDR,
-          [type]: parseInt(entry[type])
+          SDR: entry.SDR.trim(),
+          [type]: parseInt(entry[type], 10) || 0
         }));
       }
     });
@@ -307,7 +308,7 @@ async function fetchCallQualityData(apiUrl) {
     let data = await response.json();
 
     // Filter SDRs with at least 5 appointments
-    data = data.filter(entry => parseInt(entry['Number of Appointments']) >= 5);
+    data = data.filter(entry => parseInt(entry['Number of Appointments'], 10) >= 5);
 
     // Sort data in descending order based on Average Score/Appointment
     data.sort((a, b) => parseFloat(b['Average Score/Appointment']) - parseFloat(a['Average Score/Appointment']));
