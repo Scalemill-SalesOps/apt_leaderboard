@@ -4,6 +4,7 @@
 const appointmentLink = document.getElementById('appointment-link');
 const showupLink = document.getElementById('showup-link');
 const callQualityLink = document.getElementById('callquality-link');
+const callQualityLink = document.getElementById('callquality-link');
 const leaderboardContainer = document.querySelector('.leaderboard-container');
 const leaderboardTitle = document.getElementById('leaderboard-title');
 
@@ -198,6 +199,9 @@ function renderTables(data, headers, title, isSingleTable = false) {
       // First column (Left)
       const col1 = document.createElement('div');
       col1.className = 'col-md-6'; // Half width on medium and larger screens
+      // First column (Left)
+      const col1 = document.createElement('div');
+      col1.className = 'col-md-6'; // Half width on medium and larger screens
 
       const project1 = projectOrder[i];
       if (data[project1] && data[project1].length > 0) {
@@ -205,6 +209,9 @@ function renderTables(data, headers, title, isSingleTable = false) {
         col1.appendChild(table1);
       }
 
+      // Second column (Right)
+      const col2 = document.createElement('div');
+      col2.className = 'col-md-6';
       // Second column (Right)
       const col2 = document.createElement('div');
       col2.className = 'col-md-6';
@@ -218,7 +225,13 @@ function renderTables(data, headers, title, isSingleTable = false) {
       // Append columns to row
       row.appendChild(col1);
       row.appendChild(col2);
+      // Append columns to row
+      row.appendChild(col1);
+      row.appendChild(col2);
 
+      // Append row to leaderboard container
+      leaderboardContainer.appendChild(row);
+    }
       // Append row to leaderboard container
       leaderboardContainer.appendChild(row);
     }
