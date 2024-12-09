@@ -11,15 +11,16 @@ const leaderboardTitle = document.getElementById('leaderboard-title');
 let projectOrder = [];
 
 // SheetDB API endpoints
-const APPOINTMENTS_API = 'https://sheetdb.io/api/v1/bxy8qm8ctm6hi';
-const SHOWUPS_API = 'https://sheetdb.io/api/v1/wybohx0emry9z';
-const CALLQUALITY_API = 'https://sheetdb.io/api/v1/fdxxwkttf1vzq';
+const APPOINTMENTS_API = 'https://sheetlabs.com/K3/Apt_SM';
+const SHOWUPS_API = 'https://sheetlabs.com/K3/held_sm';
+const CALLQUALITY_API = 'https://sheetlabs.com/K3/callScore_sm';
 
 /**
- * Helper function to create a table for a specific project
+ * Helper Function: Create a Project Table
+ * Creates a table element for a specific project.
  * @param {string} project - The project name
  * @param {Array} data - The data array for the project
- * @param {Array} headers - The table headers
+ * @param {Array} headers - The data keys for the table
  * @param {string} type - The type of leaderboard ('Appointments' or 'Showups')
  * @returns {HTMLElement} - The project table container
  */
@@ -59,27 +60,18 @@ function createProjectTable(project, data, headers, type) {
   // Table body
   const tbody = document.createElement('tbody');
 
-  // Extract unique scores in descending order to map scores to colors
-  const uniqueScores = [...new Set(data.map(entry => parseInt(entry[type], 10)))].sort((a, b) => b - a);
-
-  // Map top 3 unique scores to crown colors
-  const colorMap = {};
-  if (uniqueScores.length >= 1) colorMap[uniqueScores[0]] = '#FFD700'; // Gold
-  if (uniqueScores.length >= 2) colorMap[uniqueScores[1]] = '#C0C0C0'; // Silver
-  if (uniqueScores.length >= 3) colorMap[uniqueScores[2]] = '#CD7F32'; // Bronze
-
   // Iterate through SDRs and create table rows
-  data.forEach((row) => {
+  data.forEach((row, index) => {
     const tr = document.createElement('tr');
 
-    // Add crown column based on the SDR's score
-    const sdrScore = parseInt(row[type], 10);
+    // Add crown column based on rank
     const crownTd = document.createElement('td');
-
-    if (colorMap[sdrScore]) {
-      crownTd.innerHTML = `<i class="fas fa-crown" style="color: ${colorMap[sdrScore]};"></i>`;
-    } else {
-      crownTd.textContent = ''; // No crown for SDRs outside top 3
+    if (index === 0) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #FFD700;"></i>`; // Gold
+    } else if (index === 1) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #C0C0C0;"></i>`; // Silver
+    } else if (index === 2) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #CD7F32;"></i>`; // Bronze
     }
     tr.appendChild(crownTd);
 
@@ -100,14 +92,16 @@ function createProjectTable(project, data, headers, type) {
 }
 
 /**
- * Helper function to create a single table without projects
+ * Helper Function: Create a Single Table with Display Headers
+ * Creates a table element for the Call Quality Leaderboard.
  * @param {Array} data - The data array
- * @param {Array} headers - The table headers
+ * @param {Array} dataKeys - The data keys corresponding to the data
+ * @param {Array} displayHeaders - The display-friendly header names
  * @param {string} title - The table title
- * @param {string} type - The type of leaderboard ('Average Score/Appointment')
+ * @param {string} type - The type of leaderboard ('AverageScoreAppointment')
  * @returns {HTMLElement} - The table container
  */
-function createSingleTable(data, headers, title, type) {
+function createSingleTable(data, dataKeys, displayHeaders, title, type) {
   // Create a container for the table
   const tableContainer = document.createElement('div');
   tableContainer.className = 'mb-4'; // Margin bottom for spacing
@@ -131,10 +125,10 @@ function createSingleTable(data, headers, title, type) {
   crownTh.textContent = ''; // Empty for the crown column
   headerRow.appendChild(crownTh);
 
-  // Add other headers
-  headers.forEach(header => {
+  // Add other headers with display-friendly names
+  displayHeaders.forEach(displayHeader => {
     const th = document.createElement('th');
-    th.textContent = header;
+    th.textContent = displayHeader;
     headerRow.appendChild(th);
   });
   thead.appendChild(headerRow);
@@ -143,34 +137,25 @@ function createSingleTable(data, headers, title, type) {
   // Table body
   const tbody = document.createElement('tbody');
 
-  // Extract unique scores in descending order to map scores to colors
-  const uniqueScores = [...new Set(data.map(entry => parseFloat(entry[type])))].sort((a, b) => b - a);
-
-  // Map top 3 unique scores to crown colors
-  const colorMap = {};
-  if (uniqueScores.length >= 1) colorMap[uniqueScores[0]] = '#FFD700'; // Gold
-  if (uniqueScores.length >= 2) colorMap[uniqueScores[1]] = '#C0C0C0'; // Silver
-  if (uniqueScores.length >= 3) colorMap[uniqueScores[2]] = '#CD7F32'; // Bronze
-
   // Iterate through SDRs and create table rows
-  data.forEach((row) => {
+  data.forEach((row, index) => {
     const tr = document.createElement('tr');
 
-    // Add crown column based on the SDR's score
-    const sdrScore = parseFloat(row[type]);
+    // Add crown column based on rank
     const crownTd = document.createElement('td');
-
-    if (colorMap[sdrScore]) {
-      crownTd.innerHTML = `<i class="fas fa-crown" style="color: ${colorMap[sdrScore]};"></i>`;
-    } else {
-      crownTd.textContent = ''; // No crown for SDRs outside top 3
+    if (index === 0) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #FFD700;"></i>`; // Gold
+    } else if (index === 1) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #C0C0C0;"></i>`; // Silver
+    } else if (index === 2) {
+      crownTd.innerHTML = `<i class="fas fa-crown" style="color: #CD7F32;"></i>`; // Bronze
     }
     tr.appendChild(crownTd);
 
     // Add other data columns
-    headers.forEach(header => {
+    dataKeys.forEach((key, idx) => {
       const td = document.createElement('td');
-      td.textContent = row[header];
+      td.textContent = row[key];
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -185,11 +170,12 @@ function createSingleTable(data, headers, title, type) {
 
 /**
  * Function to render tables and set heading
- * @param {Object} data - The processed data
- * @param {Array} headers - The table headers
+ * @param {Object|Array} data - The processed data
+ * @param {Array} headers - The data keys for the table
+ * @param {Array} displayHeaders - The display-friendly header names
  * @param {string} title - The main heading title
  * @param {boolean} isSingleTable - Flag to indicate single table rendering
- * @param {string} type - The type of leaderboard ('Appointments' or 'Showups')
+ * @param {string} type - The type of leaderboard ('Appointments', 'Showups', 'AverageScoreAppointment')
  */
 function renderTables(data, headers, title, isSingleTable = false, type = 'Appointments') {
   // Set the main heading
@@ -199,42 +185,22 @@ function renderTables(data, headers, title, isSingleTable = false, type = 'Appoi
   leaderboardContainer.innerHTML = '';
 
   if (isSingleTable) {
+    // Define display-friendly headers
+    const displayHeaders = ['SDR', 'Project', 'Number of Appointments', 'Total Score', 'Average Score/Appointment'];
     // Create and append single table
-    const table = createSingleTable(data, headers, title, type);
+    const table = createSingleTable(data, headers, displayHeaders, title, type);
     leaderboardContainer.appendChild(table);
   } else {
-    // Iterate through projects in pairs to create rows with two columns
-    for (let i = 0; i < projectOrder.length; i += 2) {
-      // Create a Bootstrap row
-      const row = document.createElement('div');
-      row.className = 'row mb-4'; // mb-4 for spacing between rows
-
-      // First column (Left)
-      const col1 = document.createElement('div');
-      col1.className = 'col-md-6'; // Half width on medium and larger screens
-
-      const project1 = projectOrder[i];
-      if (data[project1] && data[project1].length > 0) {
-        const table1 = createProjectTable(project1, data[project1], headers, type);
-        col1.appendChild(table1);
+    // Iterate through projects and create tables
+    for (let i = 0; i < projectOrder.length; i += 1) {
+      const project = projectOrder[i];
+      if (data[project] && data[project].length > 0) {
+        // Define display-friendly headers
+        const displayHeaders = ['SDR', type];
+        // Create and append project table
+        const table = createProjectTable(project, data[project], displayHeaders, type);
+        leaderboardContainer.appendChild(table);
       }
-
-      // Second column (Right)
-      const col2 = document.createElement('div');
-      col2.className = 'col-md-6';
-
-      const project2 = projectOrder[i + 1];
-      if (project2 && data[project2] && data[project2].length > 0) {
-        const table2 = createProjectTable(project2, data[project2], headers, type);
-        col2.appendChild(table2);
-      }
-
-      // Append columns to row
-      row.appendChild(col1);
-      row.appendChild(col2);
-
-      // Append row to leaderboard container
-      leaderboardContainer.appendChild(row);
     }
   }
 }
@@ -244,7 +210,7 @@ function renderTables(data, headers, title, isSingleTable = false, type = 'Appoi
  * Limits each project to top 3 SDRs based on the specified type
  * Orders projects dynamically based on total appointments or showups
  * @param {string} apiUrl - The API endpoint URL
- * @param {string} type - The type of data ('Appointments' or 'Showups')
+ * @param {string} type - The type of leaderboard ('Appointments' or 'Showups')
  * @returns {Object|null} - The processed data grouped by Team or null on failure
  */
 async function fetchLeaderboardData(apiUrl, type) {
@@ -307,18 +273,35 @@ async function fetchCallQualityData(apiUrl) {
     }
     let data = await response.json();
 
-    // Filter SDRs with at least 5 appointments
-    data = data.filter(entry => parseInt(entry['Number of Appointments'], 10) >= 5);
-
-    // Sort data in descending order based on Average Score/Appointment
-    data.sort((a, b) => parseFloat(b['Average Score/Appointment']) - parseFloat(a['Average Score/Appointment']));
-
+    // Assuming data is already in the desired format
     return data;
   } catch (error) {
-    console.error('Error fetching Call Quality data:', error);
-    leaderboardContainer.innerHTML = `<p class="text-danger">Failed to load Call Quality data. Please try again later.</p>`;
+    console.error('Error fetching Call Quality Scoring data:', error);
+    leaderboardContainer.innerHTML = `<p class="text-danger">Failed to load Call Quality Scoring data. Please try again later.</p>`;
     return null;
   }
+}
+
+/**
+ * Style "Total" Rows by Adding the 'total-row' Class
+ * Scans all tables within the leaderboard container and styles rows containing "Total".
+ */
+function styleTotalRows() {
+  // Select all tables within the leaderboard container
+  const tables = leaderboardContainer.querySelectorAll('table');
+
+  tables.forEach(table => {
+    // Iterate through each row in the table body
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach(cell => {
+        if (cell.textContent.trim().toLowerCase() === 'total') {
+          row.classList.add('total-row');
+        }
+      });
+    });
+  });
 }
 
 // Event listeners for navigation links
@@ -327,7 +310,13 @@ appointmentLink.addEventListener('click', async (e) => {
   leaderboardTitle.textContent = 'Loading Appointment Leaderboard...';
   const data = await fetchLeaderboardData(APPOINTMENTS_API, 'Appointments');
   if (data) {
-    renderTables(data, ['SDR', 'Appointments'], 'Appointment Leaderboard', false, 'Appointments');
+    renderTables(
+      data,
+      ['SDR', 'Appointments'],
+      'Appointment Leaderboard',
+      false,
+      'Appointments'
+    );
   }
 });
 
@@ -336,16 +325,30 @@ showupLink.addEventListener('click', async (e) => {
   leaderboardTitle.textContent = 'Loading Showups Leaderboard...';
   const data = await fetchLeaderboardData(SHOWUPS_API, 'Showups');
   if (data) {
-    renderTables(data, ['SDR', 'Showups'], 'Showups Leaderboard', false, 'Showups');
+    renderTables(
+      data,
+      ['SDR', 'Showups'],
+      'Showups Leaderboard',
+      false,
+      'Showups'
+    );
   }
 });
 
 callQualityLink.addEventListener('click', async (e) => {
   e.preventDefault(); // Prevent default link behavior
   leaderboardTitle.textContent = 'Loading Call Quality Scoring Leaderboard...';
+  
   const data = await fetchCallQualityData(CALLQUALITY_API);
+  
   if (data && data.length > 0) {
-    renderTables(data, ['SDR', 'Number of Appointments', 'Total Score', 'Average Score/Appointment'], 'Call Quality Scoring Leaderboard', true, 'Average Score/Appointment');
+    renderTables(
+      data,
+      ['SDR', 'Project', 'NumberofAppointments', 'TotalScore', 'AverageScoreAppointment'],
+      'Call Quality Scoring Leaderboard',
+      true,
+      'AverageScoreAppointment'
+    );
   } else {
     leaderboardContainer.innerHTML = `<p class="text-danger">No data available for Call Quality Scoring Leaderboard.</p>`;
   }
@@ -356,6 +359,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   leaderboardTitle.textContent = 'Loading Appointment Leaderboard...';
   const data = await fetchLeaderboardData(APPOINTMENTS_API, 'Appointments');
   if (data) {
-    renderTables(data, ['SDR', 'Appointments'], 'Appointment Leaderboard', false, 'Appointments');
+    renderTables(
+      data,
+      ['SDR', 'Appointments'],
+      'Appointment Leaderboard',
+      false,
+      'Appointments'
+    );
   }
 });

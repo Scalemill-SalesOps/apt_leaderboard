@@ -1,133 +1,94 @@
-/* Table styles */
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 18px;
-    width: 100%;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-.styled-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-
-.styled-table th, .styled-table td {
-    padding: 12px 15px;
-    text-align: center; /* Centers text horizontally */
-    vertical-align: middle; /* Centers text vertically */
-
-}
-
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:hover {
-    background-color: #f1f1f1;
-    transform: scale(1.01);
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-/* Responsive table */
-.styled-table {
-    font-size: 16px;
-}
-
-/* Responsive navbar adjustments */
-@media (max-width: 768px) {
-    .navbar-brand img {
-        height: 40px;
-    }
-    .nav-link {
-        font-size: 14px;
-    }
-}
-
-.table-note {
-    font-size: 0.9em; /* Slightly smaller font size */
-    color: #6c757d; /* Subtle gray color */
-    margin-bottom: 10px; /* Spacing below the note */
-    text-align: center; /* Center the text above the table */
-}
-
-.region-heading {
-    font-size: 1.5rem;
-    color: #009879;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  .nav-link {
-    position: relative;
-    color: #007bff; /* Default color */
-    text-decoration: none;
-    transition: color 0.3s ease-in-out;
-  }
-  
-  .nav-link:hover {
-    color: #0056b3; /* Change color on hover */
-  }
-  
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -5px; /* Slightly below the link */
-    width: 0;
-    height: 2px;
-    background-color: #007bff; /* Line color matches the default color */
-    transition: width 0.3s ease-in-out;
-  }
-  
-  .nav-link:hover::after {
-    width: 100%; /* Expand underline on hover */
-  }
-  
-  .main-heading {
-    font-size: 2.5rem;
-    color: #009879;
-    text-align: center;
-    font-family: 'Arial', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border-bottom: 3px solid #0056b3;
-    display: block; /* Treat it as a block element */
-    padding: 5px 15px;
-    margin: 30px auto 20px auto; /* Center it horizontally with auto */
-}
-
 /* styles.css */
 
-/* Adjust the table container to have some padding */
-.leaderboard-container .row > div {
-    padding: 0 15px; /* Optional: Adjust as needed */
-}
-
-/* Ensure tables take full width of their container */
-.styled-table {
-    width: 100%; /* Already present, reaffirming */
-}
-
-/* Center region headings within their columns */
-.region-heading {
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
     text-align: center;
-    /* Existing styles */
-    font-size: 1.5rem;
+}
+
+.logo-container {
+    margin: 20px 0;
+}
+
+.logo {
+    max-width: 200px;
+}
+
+/* Table and Chart Section Styling */
+.table-section,
+.chart-section {
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+/* Header colors matching chart bars */
+.styled-table thead th {
+    background-color: #d32f2f; /* Dark red matching chart colors */
+    color: white;
+}
+
+/* Highlighted Total Row */
+.total-row {
+    font-weight: bold;
+    background-color: #f0f0f0; /* Optional: Adds a subtle background to distinguish the total row */
+}
+
+/* Fade-in Animation */
+.hidden {
+    opacity: 0;
+}
+
+.visible {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .logo {
+        max-width: 150px;
+    }
+    .styled-table {
+        width: 95%;
+    }
+    .chart-section {
+        width: 90%;
+    }
+}
+
+@media (min-width: 768px) {
+    .styled-table {
+        font-size: 16px; /* Slightly smaller font size for better readability */
+    }
+}
+
+/* Additional Styling for Enhanced Appearance */
+.styled-table tbody tr:hover {
+    background-color: #e9e9e9;
+    transform: scale(1.01);
+    transition: transform 0.2s;
+}
+
+/* Center project and region headings within their columns */
+.region-heading,
+.project-heading {
+    font-size: 2rem;
+    font-weight: bold;
     color: #009879;
     margin-top: 20px;
     margin-bottom: 10px;
-}
-
-/* Optional: Adjust table font size for smaller columns */
-@media (min-width: 768px) {
-    .styled-table {
-        font-size: 16px; /* Slightly smaller font size for side-by-side tables */
-    }
+    text-align: center; /* Ensures headings are centered */
+    width: 100%; /* Ensures the heading takes the full width of the container */
 }
