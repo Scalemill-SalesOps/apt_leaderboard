@@ -92,3 +92,48 @@ body {
     text-align: center; /* Ensures headings are centered */
     width: 100%; /* Ensures the heading takes the full width of the container */
 }
+
+/* SDR Cell Styling */
+.sdr-cell {
+    position: relative;
+    padding-left: 40px; /* Space for the crown icon */
+    text-align: center; /* Center the SDR name */
+}
+
+/* Crown Icon Styling */
+.crown-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em; /* Adjust size as needed */
+    color: inherit; /* Inherit color from parent if needed */
+}
+
+/* SDR Name Styling */
+.sdr-name {
+    display: inline-block;
+    vertical-align: middle;
+    /* Ensure the name doesn't overlap with the crown */
+    max-width: calc(100% - 40px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Optional: Adjust table cell vertical alignment */
+.styled-table td {
+    vertical-align: middle;
+}
+
+/* Search Bar Styling */
+#search-input {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Export Buttons Styling */
+#export-csv,
+#export-pdf {
+    margin-bottom: 15px;
+}
