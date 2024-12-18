@@ -3,19 +3,27 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Leaderboard</title>
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+  <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="styles.css"> <!-- External CSS file -->
+  <!-- External CSS file -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container d-flex justify-content-between align-items-center">
       <a class="navbar-brand d-flex align-items-center" href="#">
         <img src="scalemill_logo.png" alt="Logo" class="mr-3" style="height: 80px;">
       </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
@@ -27,11 +35,18 @@
           <li class="nav-item">
             <a class="nav-link" href="#" id="callquality-link">Call Quality Scoring Leaderboard</a>
           </li>
+          <!-- New Navigation Link for Dagsmejan Tasks -->
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="dagsmejan-tasks-link">Dagsmejan Tasks</a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
+
+  <!-- Main Container -->
   <div class="container mt-5">
+    <!-- Leaderboard Section -->
     <div class="leaderboard-section">
       <!-- Main Heading -->
       <h1 id="leaderboard-title" class="main-heading"></h1>
@@ -43,9 +58,10 @@
 
   <!-- JavaScript Libraries -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-
-  <!-- External script file -->
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+  <!-- External JavaScript file -->
   <script src="script.js"></script>
 </body>
 

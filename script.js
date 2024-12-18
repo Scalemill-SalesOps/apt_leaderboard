@@ -4,11 +4,11 @@
 const appointmentLink = document.getElementById('appointment-link');
 const showupLink = document.getElementById('showup-link');
 const callQualityLink = document.getElementById('callquality-link');
+const dagsmejanTasksLink = document.getElementById('dagsmejan-tasks-link'); // New link
 const leaderboardContainer = document.querySelector('.leaderboard-container');
 const leaderboardTitle = document.getElementById('leaderboard-title');
-const searchInput = document.getElementById('search-input'); // From previous enhancements
 
-// Export Buttons
+// Export Buttons (Assuming they exist; remove if not needed)
 const exportCsvBtn = document.getElementById('export-csv');
 const exportPdfBtn = document.getElementById('export-pdf');
 
@@ -19,6 +19,44 @@ let projectOrder = [];
 const APPOINTMENTS_API = 'https://sheetlabs.com/K3/Apt_SM';
 const SHOWUPS_API = 'https://sheetlabs.com/K3/held_sm';
 const CALLQUALITY_API = 'https://sheetlabs.com/K3/callScore_sm';
+
+// New API endpoints for Dagsmejan Tasks
+const NABEEL_TASKS_API = 'https://sheetlabs.com/K3N/nabeel_tasks';
+const SIK_TASKS_API = 'https://sheetlabs.com/K3N/sik_tasks';
+
+/**
+ * Mapping Objects for Task Names
+ * Maps API task names to display-friendly names.
+ * Ensure that all task names fetched from the API are included here.
+ */
+
+// Mapping for Nabeel Tasks
+const nabeelTaskMapping = {
+    'ReturnRequests': 'Return Requests',
+    'ReturnsArrived': 'Returns Arrived',
+    'DefectivePhotos': 'Defective Photos',
+    'Email': 'Email',
+    'UnrecordedReturnsRP04/RP13': 'Unrecorded Returns (RP04/RP13)',
+    'AdditionalTask': 'Additional Task',
+    'WROUpdatedManually': 'WRO Updated Manually'
+};
+
+// Mapping for Sikendar Tasks
+const sikTaskMapping = {
+    'ReturnRequests': 'Return Requests',
+    'ReturnsArrived': 'Returns Arrived',
+    'ReplacementsReshipments': 'Replacements/Reshipments',
+    'UpdateShippedPendingOrders': 'Update/Shipped Pending Orders',
+    'B2BOrders': 'B2B Orders',
+    'SplitOrders': 'Split Orders',
+    'SignedInvoices': 'Signed Invoices',
+    'Errors': 'Errors',
+    'Email': 'Email',
+    'SampleOrders': 'Sample Orders',
+    'RemovedReservations': 'Removed Reservations',
+    'UnrecordedReturns': 'Unrecorded Returns',
+    'AdditionalTask': 'Additional Task'
+};
 
 /**
  * Helper Function: Assign Crowns Based on Rankings with Ties
@@ -56,7 +94,11 @@ function assignCrowns(data, type) {
 
 /**
  * Helper Function: Create a Project Table
- * Modified to include 'SDR' as the first header and include crowns within the SDR name cell.
+ * Includes 'SDR' as the first header and includes crowns within the SDR name cell.
+ * @param {Object} projectData - The project data containing project name and SDRs
+ * @param {Array} headers - The headers for the table
+ * @param {string} type - The type of leaderboard ('Appointments', 'Showups')
+ * @returns {HTMLElement} - The project table container
  */
 function createProjectTable(projectData, headers, type) {
     // Create a container for the project
@@ -71,7 +113,7 @@ function createProjectTable(projectData, headers, type) {
 
     // Create table
     const table = document.createElement('table');
-    table.className = 'styled-table';
+    table.className = 'styled-table table'; // Added 'table' class for Bootstrap styling
 
     // Table header
     const thead = document.createElement('thead');
@@ -82,7 +124,7 @@ function createProjectTable(projectData, headers, type) {
     sdrTh.textContent = 'SDR';
     headerRow.appendChild(sdrTh);
 
-    // Add other headers
+    // Add other headers with display-friendly names
     headers.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;
@@ -117,41 +159,44 @@ function createProjectTable(projectData, headers, type) {
     });
     table.appendChild(tbody);
 
-    // Append table to project container
-    projectContainer.appendChild(table);
+    // Append table to project container with responsive wrapper
+    const responsiveDiv = document.createElement('div');
+    responsiveDiv.className = 'table-responsive';
+    responsiveDiv.appendChild(table);
+    projectContainer.appendChild(responsiveDiv);
 
     return projectContainer;
 }
 
 /**
- * Helper Function: Create a Single Table with Display Headers
- * Modified to include 'SDR' as the first header and include crowns within the SDR name cell.
+ * Helper Function: Create a Generic Table with Display Headers
+ * Suitable for both SDR-based tables and task-based tables.
+ * @param {Array} data - The data array
+ * @param {Array} dataKeys - The keys to extract from data objects
+ * @param {Array} displayHeaders - The display-friendly header names
+ * @param {string} title - The table title
+ * @returns {HTMLElement} - The table container element
  */
-function createSingleTable(data, dataKeys, displayHeaders, title, type) {
-    // Create a container for the table
+function createGenericTable(data, dataKeys, displayHeaders, title) {
+    // Create a container for the table with Bootstrap's table-responsive class
     const tableContainer = document.createElement('div');
-    tableContainer.className = 'mb-4'; // Margin bottom for spacing
+    tableContainer.className = 'table-responsive mb-4'; // Added 'table-responsive' for horizontal scrolling on small screens
 
     // Add heading
     const tableHeading = document.createElement('h3');
     tableHeading.textContent = title;
-    tableHeading.classList.add('region-heading');
+    tableHeading.classList.add('region-heading'); // Reusing existing CSS class
     tableContainer.appendChild(tableHeading);
 
     // Create table
     const table = document.createElement('table');
-    table.className = 'styled-table';
+    table.className = 'styled-table table'; // Added 'table' class for Bootstrap styling
 
     // Table header
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
 
-    // Add 'SDR' header
-    const sdrTh = document.createElement('th');
-    sdrTh.textContent = 'SDR';
-    headerRow.appendChild(sdrTh);
-
-    // Add other headers with display-friendly names
+    // Add headers
     displayHeaders.forEach(displayHeader => {
         const th = document.createElement('th');
         th.textContent = displayHeader;
@@ -163,21 +208,12 @@ function createSingleTable(data, dataKeys, displayHeaders, title, type) {
     // Table body
     const tbody = document.createElement('tbody');
 
-    // Iterate through SDRs and create table rows
-    data.forEach((row, index) => {
+    // Iterate through data and create table rows
+    data.forEach((row) => {
         const tr = document.createElement('tr');
 
-        // SDR cell with crown and name
-        const sdrTd = document.createElement('td');
-        sdrTd.classList.add('sdr-cell'); // Add a class for styling
-        sdrTd.innerHTML = `
-            <span class="crown-icon">${row.crown}</span>
-            <span class="sdr-name">${row['SDR']}</span>
-        `;
-        tr.appendChild(sdrTd);
-
-        // Add other data columns
-        dataKeys.forEach((key, idx) => {
+        // Add data columns
+        dataKeys.forEach(key => {
             const td = document.createElement('td');
             td.textContent = row[key];
             tr.appendChild(td);
@@ -200,9 +236,8 @@ function createSingleTable(data, dataKeys, displayHeaders, title, type) {
  * @param {string} title - The main heading title
  * @param {boolean} isSingleTable - Flag to indicate single table rendering
  * @param {string} type - The type of leaderboard ('Appointments', 'Showups', 'AverageScoreAppointment')
- * @param {string} searchQuery - The search query for filtering SDRs (if any)
  */
-function renderTables(data, headers, title, isSingleTable = false, type = 'Appointments', searchQuery = '') {
+function renderTables(data, headers, title, isSingleTable = false, type = 'Appointments') {
     // Set the main heading
     leaderboardTitle.textContent = title;
 
@@ -213,7 +248,7 @@ function renderTables(data, headers, title, isSingleTable = false, type = 'Appoi
         // Define display-friendly headers
         const displayHeaders = ['Project', 'Number of Appointments', 'Total Score', 'Average Score/Appointment'];
         // Create and append single table
-        const table = createSingleTable(data, headers, displayHeaders, title, type);
+        const table = createGenericTable(data, headers, displayHeaders, title);
         leaderboardContainer.appendChild(table);
     } else {
         // Initialize a Bootstrap row
@@ -322,7 +357,7 @@ async function fetchLeaderboardData(apiUrl, type) {
  * Assigns crowns based on rankings with ties
  * Filters out SDRs with fewer than 3 appointments
  * @param {string} apiUrl - The API endpoint URL
- * @returns {Array|null} - The processed Call Quality data or null on failure
+ * @returns {Array|null} - The processed Call Quality Scoring data or null on failure
  */
 async function fetchCallQualityData(apiUrl) {
     try {
@@ -374,6 +409,128 @@ async function fetchCallQualityData(apiUrl) {
 }
 
 /**
+ * Function to fetch Nabeel Tasks data
+ * @returns {Array|null} - Processed Nabeel Tasks data or null on failure
+ */
+async function fetchNabeelTasksData() {
+    try {
+        const response = await fetch(NABEEL_TASKS_API);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.length === 0) {
+            console.warn('Nabeel Tasks API returned empty data.');
+            return null;
+        }
+
+        // Assuming only one object in the array
+        const nabeelDataRaw = data[0];
+
+        // Process data into key-value pairs with mapping
+        const processedData = Object.entries(nabeelDataRaw).map(([key, value]) => {
+            const displayTask = nabeelTaskMapping[key] || key; // Use mapping or fallback to original key
+            return {
+                Task: displayTask,
+                Count: parseInt(value, 10) || 0
+            };
+        });
+
+        return processedData;
+    } catch (error) {
+        console.error('Error fetching Nabeel Tasks data:', error);
+        return null;
+    }
+}
+
+/**
+ * Function to fetch Sik Tasks data
+ * @returns {Array|null} - Processed Sik Tasks data or null on failure
+ */
+async function fetchSikTasksData() {
+    try {
+        const response = await fetch(SIK_TASKS_API);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.length === 0) {
+            console.warn('Sik Tasks API returned empty data.');
+            return null;
+        }
+
+        // Assuming only one object in the array
+        const sikDataRaw = data[0];
+
+        // Process data into key-value pairs with mapping
+        const processedData = Object.entries(sikDataRaw).map(([key, value]) => {
+            const displayTask = sikTaskMapping[key] || key; // Use mapping or fallback to original key
+            return {
+                Task: displayTask,
+                Count: parseInt(value, 10) || 0
+            };
+        });
+
+        return processedData;
+    } catch (error) {
+        console.error('Error fetching Sik Tasks data:', error);
+        return null;
+    }
+}
+
+/**
+ * Function to render Dagsmejan Tasks Leaderboard
+ * @param {Array} sikData - Processed Sik Tasks data
+ * @param {Array} nabeelData - Processed Nabeel Tasks data
+ */
+function renderDagsmejanTasks(sikData, nabeelData) {
+    // Set the main heading
+    leaderboardTitle.textContent = 'Dagsmejan Tasks';
+
+    // Clear existing content
+    leaderboardContainer.innerHTML = '';
+
+    // Create a Bootstrap row to hold both tables side by side
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'row';
+
+    // Create Sikendar table
+    const sikTableContainer = createGenericTable(
+        sikData,
+        ['Task', 'Count'],
+        ['Task', 'Count'],
+        'Sikendar'
+    );
+
+    // Wrap the Sikendar table in a Bootstrap column
+    const sikColDiv = document.createElement('div');
+    sikColDiv.className = 'col-md-6 mb-4'; // Half-width on medium and larger screens
+    sikColDiv.appendChild(sikTableContainer);
+
+    // Create Nabeel table
+    const nabeelTableContainer = createGenericTable(
+        nabeelData,
+        ['Task', 'Count'],
+        ['Task', 'Count'],
+        'Nabeel'
+    );
+
+    // Wrap the Nabeel table in a Bootstrap column
+    const nabeelColDiv = document.createElement('div');
+    nabeelColDiv.className = 'col-md-6 mb-4'; // Half-width on medium and larger screens
+    nabeelColDiv.appendChild(nabeelTableContainer);
+
+    // Append both columns to the row
+    rowDiv.appendChild(sikColDiv);
+    rowDiv.appendChild(nabeelColDiv);
+
+    // Append the row to the leaderboard container
+    leaderboardContainer.appendChild(rowDiv);
+}
+
+/**
  * Style "Total" Rows by Adding the 'total-row' Class
  * Scans all tables within the leaderboard container and styles rows containing "Total".
  */
@@ -395,7 +552,11 @@ function styleTotalRows() {
     });
 }
 
-// Event listeners for navigation links
+/**
+ * Event listeners for navigation links
+ */
+
+// Appointment Leaderboard
 appointmentLink.addEventListener('click', async (e) => {
     e.preventDefault(); // Prevent default link behavior
     leaderboardTitle.textContent = 'Loading Appointment Leaderboard...';
@@ -411,6 +572,7 @@ appointmentLink.addEventListener('click', async (e) => {
     }
 });
 
+// Showups Leaderboard
 showupLink.addEventListener('click', async (e) => {
     e.preventDefault(); // Prevent default link behavior
     leaderboardTitle.textContent = 'Loading Showups Leaderboard...';
@@ -426,6 +588,7 @@ showupLink.addEventListener('click', async (e) => {
     }
 });
 
+// Call Quality Scoring Leaderboard
 callQualityLink.addEventListener('click', async (e) => {
     e.preventDefault(); // Prevent default link behavior
     leaderboardTitle.textContent = 'Loading Call Quality Scoring Leaderboard...';
@@ -442,6 +605,24 @@ callQualityLink.addEventListener('click', async (e) => {
         );
     } else {
         leaderboardContainer.innerHTML = `<p class="text-danger">No data available for Call Quality Scoring Leaderboard.</p>`;
+    }
+});
+
+// Dagsmejan Tasks Leaderboard
+dagsmejanTasksLink.addEventListener('click', async (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    leaderboardTitle.textContent = 'Loading Dagsmejan Tasks Leaderboard...';
+
+    // Fetch data from both APIs concurrently
+    const [sikData, nabeelData] = await Promise.all([
+        fetchSikTasksData(),
+        fetchNabeelTasksData()
+    ]);
+
+    if (sikData && nabeelData) {
+        renderDagsmejanTasks(sikData, nabeelData);
+    } else {
+        leaderboardContainer.innerHTML = `<p class="text-danger">Failed to load Dagsmejan Tasks data. Please try again later.</p>`;
     }
 });
 

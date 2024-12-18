@@ -126,10 +126,10 @@ body {
     vertical-align: middle;
 }
 
-/* Search Bar Styling */
-#search-input {
-    max-width: 400px;
-    margin: 0 auto;
+/* Highlighted Text Styling (Optional) */
+.highlight {
+    background-color: yellow;
+    color: black;
 }
 
 /* Export Buttons Styling */
