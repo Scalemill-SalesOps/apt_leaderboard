@@ -114,7 +114,6 @@ body {
 .sdr-name {
     display: inline-block;
     vertical-align: middle;
-    /* Ensure the name doesn't overlap with the crown */
     max-width: calc(100% - 40px);
     white-space: nowrap;
     overflow: hidden;
